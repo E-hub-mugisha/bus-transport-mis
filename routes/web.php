@@ -53,9 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/gps/update', [GpsController::class, 'update']);
 
     /* GPS MAP PAGE */
-    Route::get('/gps', function () {
-        return view('gps.live');
-    })->name('gps.live.view');
+    Route::get('/gps', [GpsController::class, 'liveView'])->name('gps.live.view');
 
     Route::get('/gps/all', [GpsController::class, 'allBusLocationsWithRoute'])->name('gps.all');
     /* GPS LIVE DATA (JSON) */

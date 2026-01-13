@@ -56,7 +56,16 @@ class GpsController extends Controller
 
         return response()->json(['message' => 'Location updated']);
     }
+    public function liveView()
+    {
+        // Get all ongoing trips
+        $trips = Trip::where('status', 'ongoing')->with('bus')->get();
 
+        // Get distinct buses from ongoing trips
+        $buses = $trips->pluck('bus')->unique('id');
+
+        return view('gps.live', compact('buses'));
+    }
     // Fetch live locations
     public function live()
     {
@@ -67,7 +76,7 @@ class GpsController extends Controller
 
     public function allBusLocationsWithRoute()
     {
-        $locations = BusLocation::with(['bus','trip','trip.route'])
+        $locations = BusLocation::with(['bus', 'trip', 'trip.route'])
             ->orderBy('recorded_at', 'desc')
             ->get()
             ->unique('bus_id') // only latest per bus
