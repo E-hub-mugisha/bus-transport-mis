@@ -6,19 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class BusLocation extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'bus_id',
+        'trip_id',
         'latitude',
         'longitude',
         'recorded_at',
     ];
 
-    protected $casts = [
-        'recorded_at' => 'datetime',
-    ];
-
     public function bus()
     {
         return $this->belongsTo(Bus::class);
+    }
+
+    public function trip()
+    {
+        return $this->belongsTo(Trip::class);
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bus_locations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('bus_id')->constrained('buses')->cascadeOnDelete();
+            $table->foreignId('trip_id')->constrained('trips')->cascadeOnDelete(); // track which trip
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->timestamp('recorded_at');
