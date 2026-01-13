@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             BusSeeder::class,
             DriverSeeder::class,
             RouteSeeder::class,
-            TripSeeder::class
+            TripSeeder::class,
+            BusLocationSeeder::class,
         ]);
     }
 }

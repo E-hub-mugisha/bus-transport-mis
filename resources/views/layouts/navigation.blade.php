@@ -30,6 +30,9 @@
                     <x-nav-link :href="route('trips.index')" :active="request()->routeIs('trips.index')">
                         {{ __('Trips') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('gps.live.view')" :active="request()->routeIs('gps.live.view')">
+                        <i class="bi bi-geo-alt-fill"></i> Live Bus Tracking
+                    </x-nav-link>
                 </div>
             </div>
 

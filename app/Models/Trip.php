@@ -28,4 +28,14 @@ class Trip extends Model
     {
         return $this->belongsTo(Route::class);
     }
+
+    public function locations()
+    {
+        return $this->hasMany(BusLocation::class);
+    }
+
+    public function latestLocation()
+    {
+        return $this->hasOne(BusLocation::class)->latestOfMany('recorded_at');
+    }
 }

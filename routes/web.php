@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\GpsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\TripController;
@@ -48,6 +49,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('trips', [TripController::class, 'store'])->name('trips.store');
     Route::put('trips/{trip}', [TripController::class, 'update'])->name('trips.update');
     Route::delete('trips/{trip}', [TripController::class, 'destroy'])->name('trips.destroy');
+
+    Route::post('/gps/update', [GpsController::class, 'update']);
+
+    /* GPS MAP PAGE */
+    Route::get('/gps', function () {
+        return view('gps.live');
+    })->name('gps.live.view');
+
+    Route::get('/gps/all', [GpsController::class, 'allBusLocationsWithRoute'])->name('gps.all');
+    /* GPS LIVE DATA (JSON) */
+    Route::get('/gps/live', [GpsController::class, 'live'])
+        ->name('gps.live.data');
+
+        // Start trip & auto-save location
+    Route::post('/gps/start-trip', [GpsController::class, 'startTrip'])
+        ->name('gps.start.trip');
 });
 
 
