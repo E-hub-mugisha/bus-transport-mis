@@ -2,63 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Route;
 use Illuminate\Http\Request;
 
 class RouteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $routes = Route::orderBy('id','desc')->get();
+        return view('routes.index', compact('routes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|unique:routes,name',
+            'start_point' => 'required|string',
+            'end_point' => 'required|string',
+        ]);
+
+        Route::create($request->only('name', 'start_point', 'end_point'));
+
+        return redirect()->back()->with('success', 'Route created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Route $route)
     {
-        //
+        return view('routes.edit', compact('route'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Route $route)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|unique:routes,name,'.$route->id,
+            'start_point' => 'required|string',
+            'end_point' => 'required|string',
+        ]);
+
+        $route->update($request->only('name', 'start_point', 'end_point'));
+
+        return redirect()->back()->with('success', 'Route updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Route $route)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $route->delete();
+        return redirect()->back()->with('success', 'Route deleted successfully.');
     }
 }
