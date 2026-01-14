@@ -60,9 +60,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gps/live', [GpsController::class, 'live'])
         ->name('gps.live.data');
 
-        // Start trip & auto-save location
+    // Start trip & auto-save location
     Route::post('/gps/start-trip', [GpsController::class, 'startTrip'])
         ->name('gps.start.trip');
+
+    Route::get('/bus-tracking', [GpsController::class, 'userTracking'])
+        ->name('user.bus.tracking');
+
+    Route::get('/bus-tracking/data', [GpsController::class, 'dataTracking'])
+        ->name('user.bus.tracking.data');
 });
 
 

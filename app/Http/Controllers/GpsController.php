@@ -84,4 +84,22 @@ class GpsController extends Controller
 
         return response()->json($locations);
     }
+
+    public function userTracking()
+    {
+        return view('users.bus-tracking');
+    }
+
+    public function dataTracking()
+    {
+        $trips = Trip::with([
+                'bus',
+                'route',
+                'latestLocation'
+            ])
+            ->where('status', 'ongoing')
+            ->get();
+
+        return response()->json($trips);
+    }
 }
