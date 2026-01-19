@@ -10,7 +10,7 @@ class RouteController extends Controller
     public function index()
     {
         $routes = Route::orderBy('id','desc')->get();
-        return view('routes.index', compact('routes'));
+        return view('admin.routes.index', compact('routes'));
     }
 
     public function store(Request $request)

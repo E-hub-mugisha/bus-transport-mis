@@ -114,7 +114,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ADMIN – Live pickup monitoring
     Route::get('/gps/live-pickups', function () {
-        return view('gps.live_pickups');
+        return view('admin.gps.live_pickups');
     })->name('gps.live.pickups.view');
 
     // DATA API

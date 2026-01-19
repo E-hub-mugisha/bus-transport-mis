@@ -11,7 +11,7 @@ class StudentPickupPointController extends Controller
     public function index()
     {
         $students = Student::with('pickupPoint')->get();
-        return view('pickup_points.index', compact('students'));
+        return view('admin.pickup_points.index', compact('students'));
     }
 
     public function store(Request $request)

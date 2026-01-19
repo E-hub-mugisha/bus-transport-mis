@@ -64,7 +64,7 @@ class GpsController extends Controller
         // Get distinct buses from ongoing trips
         $buses = $trips->pluck('bus')->unique('id');
 
-        return view('gps.live', compact('buses'));
+        return view('admin.gps.live', compact('buses'));
     }
     // Fetch live locations
     public function live()

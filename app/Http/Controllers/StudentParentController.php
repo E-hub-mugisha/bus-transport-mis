@@ -10,7 +10,7 @@ class StudentParentController extends Controller
     public function index()
     {
         $parents = StudentParent::all();
-        return view('student_parents.index', compact('parents'));
+        return view('admin.student_parents.index', compact('parents'));
     }
     public function store(Request $request)
     {

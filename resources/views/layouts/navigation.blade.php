@@ -1,208 +1,149 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container-fluid">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
+            🚍 Live Pickup
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <!-- LEFT MENU -->
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
+
+                {{-- ================= ADMIN / SUPER ADMIN ================= --}}
+                @if(in_array(auth()->user()->role, ['admin', 'super_admin']))
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
-                </div>
+                </li>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <!-- Management Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i> Management
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('users.index') }}">👥 Users</a></li>
+                        <li><a class="dropdown-item" href="{{ route('students.index') }}">🎓 Students</a></li>
+                        <li><a class="dropdown-item" href="{{ route('student-parents.index') }}">👨‍👩‍👧 Parents</a></li>
+                        <li><a class="dropdown-item" href="{{ route('drivers.index') }}">🧑‍✈️ Drivers</a></li>
+                        <li><a class="dropdown-item" href="{{ route('buses.index') }}">🚍 Buses</a></li>
+                    </ul>
+                </li>
 
-                    {{-- ================= ADMIN / SUPER ADMIN ================= --}}
-                    @if(in_array(auth()->user()->role, ['admin', 'super_admin']))
+                <!-- Trips & Routes -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        🛣 Operations
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('routes.index') }}">Routes</a></li>
+                        <li><a class="dropdown-item" href="{{ route('trips.index') }}">Trips</a></li>
+                        <li><a class="dropdown-item" href="{{ route('bus-students.index') }}">Assign Students</a></li>
+                        <li><a class="dropdown-item" href="{{ route('pickup-points.index') }}">Pickup Points</a></li>
+                    </ul>
+                </li>
 
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        📊 Dashboard
-                    </x-nav-link>
+                <!-- Live Tracking -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-primary fw-semibold" href="#" data-bs-toggle="dropdown">
+                        🗺 Live Tracking
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('gps.live.view') }}">Live Bus Tracking</a></li>
+                        <li><a class="dropdown-item" href="{{ route('gps.live.pickups.view') }}">Live Student Pickups</a></li>
+                    </ul>
+                </li>
 
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                        👥 Users
-                    </x-nav-link>
+                @endif
 
-                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                        🎓 Students
-                    </x-nav-link>
+                {{-- ================= DRIVER ================= --}}
+                @if(auth()->user()->role === 'driver')
 
-                    <x-nav-link :href="route('student-parents.index')" :active="request()->routeIs('student-parents.*')">
-                        👨‍👩‍👧 Parents
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('drivers.index')" :active="request()->routeIs('drivers.*')">
-                        🧑‍✈️ Drivers
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('buses.index')" :active="request()->routeIs('buses.*')">
-                        🚍 Buses
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('routes.index')" :active="request()->routeIs('routes.*')">
-                        🛣 Routes
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('trips.index')" :active="request()->routeIs('trips.*')">
-                        📅 Trips
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('bus-students.index')" :active="request()->routeIs('bus-students.*')">
-                        🔗 Assign Students
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('pickup-points.index')" :active="request()->routeIs('pickup-points.*')">
-                        📍 Pickup Points
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('gps.live.view')" :active="request()->routeIs('gps.live.view')">
-                        🗺 Live Bus Tracking
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('gps.live.pickups.view')" :active="request()->routeIs('gps.live.pickups.view')">
-                        🎯 Live Student Pickups
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
-                        📈 Reports
-                    </x-nav-link>
-
-                    @endif
-
-
-                    {{-- ================= DRIVER ================= --}}
-                    @if(auth()->user()->role === 'driver')
-
-                    <x-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('driver.dashboard')">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('driver.dashboard') }}">
                         🚍 Driver Dashboard
-                    </x-nav-link>
+                    </a>
+                </li>
 
-                    <x-nav-link :href="route('driver.trips')"
-                        :active="request()->routeIs('driver.trips*')">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         📅 My Trips
-                    </x-nav-link>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('driver.trips') }}">Assigned Trips</a></li>
+                        <li><a class="dropdown-item" href="{{ route('driver.pickups.student.live') }}">Live Pickup Route</a></li>
+                        <li><a class="dropdown-item" href="{{ route('driver.students') }}">Students on Bus</a></li>
+                    </ul>
+                </li>
 
-                    <x-nav-link :href="route('driver.pickups.student.live')"
-                        :active="request()->routeIs('driver.pickups.student.live')">
-                        🧭 Live Pickup Route
-                    </x-nav-link>
+                @endif
 
-                    <x-nav-link :href="route('driver.students')"
-                        :active="request()->routeIs('driver.students')">
-                        🎓 Students
-                    </x-nav-link>
+                {{-- ================= PARENT / STUDENT ================= --}}
+                @if(auth()->user()->role === 'user')
 
-                    @endif
-
-
-                    {{-- ================= PARENT / STUDENT ================= --}}
-                    @if(auth()->user()->role === 'user')
-
-                    <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('user.dashboard') }}">
                         🎓 My Dashboard
-                    </x-nav-link>
+                    </a>
+                </li>
 
-                    <x-nav-link :href="route('user.bus.tracking')" :active="request()->routeIs('user.bus.tracking')">
-                        🚍 Track School Bus
-                    </x-nav-link>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        🚍 Bus Info
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('user.bus.tracking') }}">Real-time Tracking</a></li>
+                        <li><a class="dropdown-item" href="{{ route('user.schedule') }}">Bus Schedule</a></li>
+                        <li><a class="dropdown-item" href="{{ route('trip.history') }}">Trip History</a></li>
+                    </ul>
+                </li>
 
-                    <x-nav-link :href="route('user.schedule')" :active="request()->routeIs('user.schedule')">
-                        ⏰ Bus Schedule
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('user.notifications')" :active="request()->routeIs('user.notifications')">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('user.notifications') }}">
                         🔔 Notifications
-                    </x-nav-link>
-                    <x-nav-link :href="route('trip.history')">
-                        📜 Trip History
-                    </x-nav-link>
-                    @endif
+                    </a>
+                </li>
 
-                </div>
+                @endif
+            </ul>
 
-            </div>
+            <!-- RIGHT MENU (USER DROPDOWN) -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-semibold" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                👤 Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="dropdown-item text-danger">
+                                    🚪 Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                {{ __('Users') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
         </div>
     </div>
 </nav>

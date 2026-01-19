@@ -12,7 +12,7 @@ class StudentController extends Controller
     {
         $students = Student::with('parent')->get();
         $parents = StudentParent::all();
-        return view('students.index', compact('students', 'parents'));
+        return view('admin.students.index', compact('students', 'parents'));
     }
     public function store(Request $request)
     {
