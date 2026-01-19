@@ -17,7 +17,7 @@ class TripController extends Controller
         $drivers = Driver::with('user')->get();
         $routes = Route::all();
 
-        return view('trips.index', compact('trips','buses','drivers','routes'));
+        return view('admin.trips.index', compact('trips','buses','drivers','routes'));
     }
 
     public function store(Request $request)

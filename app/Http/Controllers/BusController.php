@@ -12,7 +12,7 @@ class BusController extends Controller
     public function index()
     {
         $buses = Bus::orderBy('id', 'desc')->get();
-        return view('buses.index', compact('buses'));
+        return view('admin.buses.index', compact('buses'));
     }
 
     public function store(Request $request)

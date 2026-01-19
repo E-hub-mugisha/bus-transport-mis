@@ -93,10 +93,23 @@ class GpsController extends Controller
     public function dataTracking()
     {
         $trips = Trip::with([
-                'bus',
-                'route',
-                'latestLocation'
-            ])
+            'bus',
+            'route',
+            'latestLocation'
+        ])
+            ->where('status', 'ongoing')
+            ->get();
+
+        return response()->json($trips);
+    }
+
+    public function liveBusWithPickupPoints()
+    {
+        $trips = Trip::with([
+            'bus.students.pickupPoint',
+            'route',
+            'latestLocation'
+        ])
             ->where('status', 'ongoing')
             ->get();
 

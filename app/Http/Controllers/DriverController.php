@@ -16,7 +16,7 @@ class DriverController extends Controller
     public function index()
     {
         $drivers = Driver::with('user')->orderBy('id', 'desc')->get();
-        return view('drivers.index', compact('drivers'));
+        return view('admin.drivers.index', compact('drivers'));
     }
 
     public function store(Request $request)

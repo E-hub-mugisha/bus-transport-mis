@@ -12,32 +12,115 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
+                    {{-- ================= ADMIN / SUPER ADMIN ================= --}}
+                    @if(in_array(auth()->user()->role, ['admin', 'super_admin']))
+
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                        {{ __('Users') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('buses.index')" :active="request()->routeIs('buses.index')">
-                        {{ __('Buses') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('drivers.index')" :active="request()->routeIs('drivers.index')">
-                        {{ __('Drivers') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('routes.index')" :active="request()->routeIs('routes.index')">
-                        {{ __('Routes') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('trips.index')" :active="request()->routeIs('trips.index')">
-                        {{ __('Trips') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('gps.live.view')" :active="request()->routeIs('gps.live.view')">
-                        <i class="bi bi-geo-alt-fill"></i> Live Bus Tracking
-                    </x-nav-link>
-                    <x-nav-link :href="route('user.bus.tracking')" :active="request()->routeIs('user.bus.tracking')">
-                            🚍 Bus Tracking & Schedules
+                        📊 Dashboard
                     </x-nav-link>
 
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        👥 Users
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                        🎓 Students
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('student-parents.index')" :active="request()->routeIs('student-parents.*')">
+                        👨‍👩‍👧 Parents
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('drivers.index')" :active="request()->routeIs('drivers.*')">
+                        🧑‍✈️ Drivers
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('buses.index')" :active="request()->routeIs('buses.*')">
+                        🚍 Buses
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('routes.index')" :active="request()->routeIs('routes.*')">
+                        🛣 Routes
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('trips.index')" :active="request()->routeIs('trips.*')">
+                        📅 Trips
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('bus-students.index')" :active="request()->routeIs('bus-students.*')">
+                        🔗 Assign Students
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('pickup-points.index')" :active="request()->routeIs('pickup-points.*')">
+                        📍 Pickup Points
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('gps.live.view')" :active="request()->routeIs('gps.live.view')">
+                        🗺 Live Bus Tracking
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('gps.live.pickups.view')" :active="request()->routeIs('gps.live.pickups.view')">
+                        🎯 Live Student Pickups
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                        📈 Reports
+                    </x-nav-link>
+
+                    @endif
+
+
+                    {{-- ================= DRIVER ================= --}}
+                    @if(auth()->user()->role === 'driver')
+
+                    <x-nav-link :href="route('driver.dashboard')" :active="request()->routeIs('driver.dashboard')">
+                        🚍 Driver Dashboard
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('driver.trips')"
+                        :active="request()->routeIs('driver.trips*')">
+                        📅 My Trips
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('driver.pickups.student.live')"
+                        :active="request()->routeIs('driver.pickups.student.live')">
+                        🧭 Live Pickup Route
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('driver.students')"
+                        :active="request()->routeIs('driver.students')">
+                        🎓 Students
+                    </x-nav-link>
+
+                    @endif
+
+
+                    {{-- ================= PARENT / STUDENT ================= --}}
+                    @if(auth()->user()->role === 'user')
+
+                    <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
+                        🎓 My Dashboard
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('user.bus.tracking')" :active="request()->routeIs('user.bus.tracking')">
+                        🚍 Track School Bus
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('user.schedule')" :active="request()->routeIs('user.schedule')">
+                        ⏰ Bus Schedule
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('user.notifications')" :active="request()->routeIs('user.notifications')">
+                        🔔 Notifications
+                    </x-nav-link>
+                    <x-nav-link :href="route('trip.history')">
+                        📜 Trip History
+                    </x-nav-link>
+                    @endif
+
                 </div>
+
             </div>
 
             <!-- Settings Dropdown -->
