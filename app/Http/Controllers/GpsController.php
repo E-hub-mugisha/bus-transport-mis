@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusLocation;
 use App\Models\Trip;
+use App\Models\TripLog;
 use Illuminate\Http\Request;
 
 class GpsController extends Controller
@@ -30,6 +31,15 @@ class GpsController extends Controller
             'longitude' => $request->longitude,
             'recorded_at' => now(),
         ]);
+
+        foreach ($trip->bus->students as $student) {
+            TripLog::create([
+                'trip_id' => $trip->id,
+                'student_id' => $student->id,
+                'bus_id' => $trip->bus_id,
+                'driver_id' => $trip->driver_id
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Trip started and location saved!');
     }
