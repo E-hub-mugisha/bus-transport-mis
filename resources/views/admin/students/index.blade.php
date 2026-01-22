@@ -67,9 +67,9 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Parent</label>
-                                    <select class="form-select" name="student_parent_id" required>
+                                    <select class="form-select" name="parent_id" required>
                                         @foreach($parents as $parent)
-                                        <option value="{{ $parent->id }}" {{ $student->student_parent_id == $parent->id ? 'selected' : '' }}>
+                                        <option value="{{ $parent->id }}" {{ $student->parent_id == $parent->id ? 'selected' : '' }}>
                                             {{ $parent->name }}
                                         </option>
                                         @endforeach

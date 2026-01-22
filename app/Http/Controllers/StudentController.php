@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Mail\BusAlert;
+use App\Models\Bus;
 use App\Models\Student;
 use App\Models\StudentParent;
 use App\Models\StudentTrip;
+use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -15,14 +17,16 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::with('parent', 'buses')->get();
-        $parents = StudentParent::all();
-        return view('admin.students.index', compact('students', 'parents'));
+        $parents = User::where('role', 'parent')->get();
+        $buses = Bus::all();
+        return view('admin.students.index', compact('students', 'parents','buses'));
     }
     public function store(Request $request)
     {
         $request->validate([
-            'names' => 'required|string|max:255',
-            'student_parent_id' => 'required|exists:student_parents,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'parent_id' => 'required|exists:parents,id',
             'bus_id' => 'required|exists:buses,id'
         ]);
 
@@ -31,8 +35,9 @@ class StudentController extends Controller
         $regNumber = 'STU-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
         $student = Student::create([
-            'names' => $request->names,
-            'student_parent_id' => $request->student_parent_id,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'parent_id' => $request->parent_id,
             'reg_number' => $regNumber,
         ]);
 
