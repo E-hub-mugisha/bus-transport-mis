@@ -10,7 +10,6 @@ class BusLocation extends Model
 
     protected $fillable = [
         'bus_id',
-        'trip_id',
         'latitude',
         'longitude',
         'recorded_at',
@@ -23,6 +22,6 @@ class BusLocation extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class);
+        return $this->belongsTo(BusTrip::class);
     }
 }

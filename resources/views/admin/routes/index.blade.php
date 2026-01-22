@@ -16,6 +16,7 @@
                 <th>Name</th>
                 <th>Start Point</th>
                 <th>End Point</th>
+                <th>Bus</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -26,6 +27,7 @@
                 <td>{{ $route->name }}</td>
                 <td>{{ $route->start_point }}</td>
                 <td>{{ $route->end_point }}</td>
+                <td>{{ $route->bus->plate_number ?? 'Not Assigned' }}</td>
                 <td>
                     <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editRouteModal{{ $route->id }}">Edit</button>
 
@@ -58,6 +60,18 @@
                                         <label>End Point</label>
                                         <input type="text" name="end_point" class="form-control" value="{{ $route->end_point }}" required>
                                     </div>
+                                    <textarea name="pickup_points" class="form-control mt-2">
+                                    {{ implode(',', $route->pickup_points ?? []) }}
+                                    </textarea>
+
+                                    <select name="bus_id" class="form-control mt-2">
+                                        <option value="">Assign Bus</option>
+                                        @foreach($buses as $bus)
+                                        <option value="{{ $bus->id }}" @selected($route->bus_id == $bus->id)>
+                                            {{ $bus->plate_number }}
+                                        </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -96,6 +110,17 @@
                     <label>End Point</label>
                     <input type="text" name="end_point" class="form-control" required>
                 </div>
+                <input type="text" name="end_point" class="form-control mt-2" placeholder="End Point">
+
+                <textarea name="pickup_points" class="form-control mt-2"
+                    placeholder="Pickup points (comma separated)"></textarea>
+
+                <select name="bus_id" class="form-control mt-2">
+                    <option value="">Assign Bus</option>
+                    @foreach($buses as $bus)
+                    <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -108,14 +133,14 @@
 <!-- Toast Notifications -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     @if(session('success'))
-        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ session('success') }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
+    </div>
     @endif
 </div>
 

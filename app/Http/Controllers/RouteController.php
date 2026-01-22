@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bus;
 use App\Models\Route;
 use Illuminate\Http\Request;
 
@@ -9,44 +10,54 @@ class RouteController extends Controller
 {
     public function index()
     {
-        $routes = Route::orderBy('id','desc')->get();
+        $routes = Route::with('bus')->get();
         return view('admin.routes.index', compact('routes'));
+    }
+
+    public function create()
+    {
+        $buses = Bus::all();
+        return view('admin.routes.create', compact('buses'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:routes,name',
-            'start_point' => 'required|string',
-            'end_point' => 'required|string',
+            'name' => 'required',
+            'start_point' => 'required',
+            'end_point' => 'required'
         ]);
 
-        Route::create($request->only('name', 'start_point', 'end_point'));
+        Route::create([
+            'name' => $request->name,
+            'start_point' => $request->start_point,
+            'end_point' => $request->end_point,
+            'pickup_points' => $request->pickup_points,
+            'bus_id' => $request->bus_id
+        ]);
 
-        return redirect()->back()->with('success', 'Route created successfully.');
+        return redirect()->route('admin.routes.index')
+            ->with('success', 'Route created successfully');
     }
 
     public function edit(Route $route)
     {
-        return view('routes.edit', compact('route'));
+        $buses = Bus::all();
+        return view('admin.routes.edit', compact('route', 'buses'));
     }
 
     public function update(Request $request, Route $route)
     {
-        $request->validate([
-            'name' => 'required|string|unique:routes,name,'.$route->id,
-            'start_point' => 'required|string',
-            'end_point' => 'required|string',
-        ]);
+        $route->update($request->all());
 
-        $route->update($request->only('name', 'start_point', 'end_point'));
-
-        return redirect()->back()->with('success', 'Route updated successfully.');
+        return redirect()->route('admin.routes.index')
+            ->with('success', 'Route updated successfully');
     }
 
     public function destroy(Route $route)
     {
         $route->delete();
-        return redirect()->back()->with('success', 'Route deleted successfully.');
+        return redirect()->route('admin.routes.index')
+            ->with('success', 'Route deleted successfully');
     }
 }

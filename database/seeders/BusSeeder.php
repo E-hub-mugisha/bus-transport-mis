@@ -2,55 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\Bus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Bus;
 
 class BusSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        $buses = [
-            [
-                'bus_number'   => 'BUS-001',
-                'capacity'     => '45',
-                'plate_number' => 'RAB-123A',
-                'status'       => 'active',
-            ],
-            [
-                'bus_number'   => 'BUS-002',
-                'capacity'     => '30',
-                'plate_number' => 'RAB-456B',
-                'status'       => 'active',
-            ],
-            [
-                'bus_number'   => 'BUS-003',
-                'capacity'     => '50',
-                'plate_number' => 'RAB-789C',
-                'status'       => 'maintenance',
-            ],
-            [
-                'bus_number'   => 'BUS-004',
-                'capacity'     => '40',
-                'plate_number' => 'RAB-321D',
-                'status'       => 'inactive',
-            ],
-            [
-                'bus_number'   => 'BUS-005',
-                'capacity'     => '35',
-                'plate_number' => 'RAB-654E',
-                'status'       => 'active',
-            ],
-        ];
+        $plates = ['RAB-101A','RAB-102B','RAB-103C','RAB-104D','RAB-105E'];
 
-        foreach ($buses as $bus) {
-            Bus::updateOrCreate(
-                ['bus_number' => $bus['bus_number']],
-                $bus
-            );
+        foreach($plates as $index => $plate){
+            Bus::create([
+                'plate_number' => $plate,
+                'driver_id' => $index+1
+            ]);
         }
     }
 }

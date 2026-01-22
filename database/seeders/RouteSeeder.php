@@ -2,53 +2,31 @@
 
 namespace Database\Seeders;
 
-use App\Models\Route;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Route;
+use App\Models\Bus;
 
 class RouteSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
         $routes = [
-            [
-                'name' => 'Route 1 – City Center',
-                'start_point' => 'City Center',
-                'end_point' => 'University Campus',
-            ],
-            [
-                'name' => 'Route 2 – East Zone',
-                'start_point' => 'East Market',
-                'end_point' => 'University Campus',
-            ],
-            [
-                'name' => 'Route 3 – West Zone',
-                'start_point' => 'West Terminal',
-                'end_point' => 'University Campus',
-            ],
-            [
-                'name' => 'Route 4 – North Zone',
-                'start_point' => 'North Station',
-                'end_point' => 'University Campus',
-            ],
-            [
-                'name' => 'Route 5 – South Zone',
-                'start_point' => 'South Park',
-                'end_point' => 'University Campus',
-            ],
+            ['name'=>'Kigali City Route', 'pickup'=>['Kimironko','Remera','Gikondo'], 'dropoff'=>['IRERERO Academy']],
+            ['name'=>'Kanombe Route', 'pickup'=>['Kanombe','Nyamirambo','Kicukiro'], 'dropoff'=>['IRERERO Academy']],
+            ['name'=>'Gatsata Route', 'pickup'=>['Gatsata','Masoro','Nyarutarama'], 'dropoff'=>['IRERERO Academy']],
+            ['name'=>'Kamonyi Route', 'pickup'=>['Runda','Kamonyi Centre','Ruyenzi'], 'dropoff'=>['IRERERO Academy']],
+            ['name'=>'Kacyiru Route', 'pickup'=>['Kacyiru','Kimironko','Nyarutarama'], 'dropoff'=>['IRERERO Academy']],
         ];
 
-        foreach ($routes as $route) {
-            Route::updateOrCreate(
-                [
-                    'name' => $route['name'],
-                    'start_point' => $route['start_point'],
-                    'end_point' => $route['end_point'],
-                ]
-            );
+        $buses = Bus::all();
+
+        foreach($routes as $route){
+            Route::create([
+                'name' => $route['name'],
+                'bus_id' => $buses->random()->id,
+                'pickup_points' => json_encode($route['pickup']),
+                'dropoff_points' => json_encode($route['dropoff'])
+            ]);
         }
     }
 }

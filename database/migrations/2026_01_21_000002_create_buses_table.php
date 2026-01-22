@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_parents', function (Blueprint $table) {
+        Schema::create('buses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('plate_number')->unique(); // RAB-xxx realistic
+            $table->foreignId('driver_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['active', 'inactive','maintenance'])->default('active');
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student_parents');
+        Schema::dropIfExists('buses');
     }
 };

@@ -21,6 +21,7 @@
                 <th>Names</th>
                 <th>Reg Number</th>
                 <th>Parent</th>
+                <th>Bus</th>
                 <th>Created At</th>
                 <th>Actions</th>
             </tr>
@@ -32,8 +33,10 @@
                 <td>{{ $student->names }}</td>
                 <td>{{ $student->reg_number }}</td>
                 <td>{{ $student->parent->name }}</td>
+                <td>{{ $student->buses->pluck('plate_number')->join(', ') }}</td>
                 <td>{{ $student->created_at->format('Y-m-d') }}</td>
                 <td>
+                    <a class="btn btn-info btn-sm" href="{{ route('students.show', $student->id) }}">View Profile</a>
                     <!-- Edit Button -->
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editStudentModal{{ $student->id }}">
                         Edit
@@ -132,6 +135,13 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <select name="bus_id" class="form-control mt-2">
+                        <option value="">Assign Bus</option>
+                        @foreach($buses as $bus)
+                        <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bus;
 use App\Models\BusLocation;
 use App\Models\Trip;
 use App\Models\TripLog;
@@ -9,6 +10,44 @@ use Illuminate\Http\Request;
 
 class GpsController extends Controller
 {
+    public function map()
+    {
+        return view('admin.map.index'); // Make sure this Blade exists
+    }
+
+    // Store GPS update
+    public function store(Request $request)
+    {
+        $request->validate([
+            'bus_id' => 'required|exists:buses,id',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $location = BusLocation::create([
+            'bus_id' => $request->bus_id,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'recorded_at' => now()
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Location saved',
+            'data' => $location
+        ]);
+    }
+
+    // Get latest location of a bus
+    public function getLatest(Bus $bus)
+    {
+        $location = BusLocation::where('bus_id', $bus->id)
+            ->latest('recorded_at')
+            ->first();
+
+        return response()->json($location);
+    }
+
     public function startTrip(Request $request)
     {
         $request->validate([

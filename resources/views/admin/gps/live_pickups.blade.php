@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container-fluid mt-4">
-    <h4 class="fw-bold mb-3">🚍 Live Bus Tracking & Student Pickup Points</h4>
+    <h4 class="fw-bold mb-3" >🚍 Live Bus Tracking & Student Pickup </h4>
 
     <div class="card shadow-sm">
         <div class="card-body p-0">

@@ -2,23 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class StudentTrip extends Model
 {
-    use HasFactory;
-
-    protected $fillable = ['names', 'reg_number', 'parent_id'];
-
     public function parent()
     {
         return $this->belongsTo(User::class, 'parent_id');
     }
+
     public function buses()
     {
-        return $this->belongsToMany(Bus::class, 'bus_students');
+        return $this->belongsToMany(Bus::class, 'student_bus');
     }
+
     public function trips()
     {
         return $this->hasMany(StudentTrip::class);

@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('admin/map', [GpsController::class, 'map'])->name('admin.map');
     Route::get('buses', [BusController::class, 'index'])->name('buses.index');
     Route::post('buses', [BusController::class, 'store'])->name('buses.store');
     Route::get('buses/{bus}/edit', [BusController::class, 'edit'])->name('buses.edit');
@@ -90,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
 
     Route::get('/bus-students', [BusStudentController::class, 'index'])
         ->name('bus-students.index');
@@ -156,12 +158,22 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->group(function () 
 
     Route::get('/students/{student}', [DriverStudentController::class, 'show'])
         ->name('driver.students.show');
+
+    Route::get('trips', [App\Http\Controllers\Driver\TripController::class, 'index'])->name('trips.index');
+    Route::post('trips/start', [App\Http\Controllers\Driver\TripController::class, 'start'])->name('trips.start');
+    Route::post('trips/{trip}/end', [App\Http\Controllers\Driver\TripController::class, 'end'])->name('trips.end');
 });
 
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/bus-tracking', [UserBusTrackingController::class, 'index'])
         ->name('user.bus.tracking');
+
+    Route::get('/user-dashboard', [UserBusTrackingController::class, 'index'])
+        ->name('user.dashboard');
+
+    Route::get('/user-schedule', [UserBusTrackingController::class, 'index'])
+        ->name('user.schedule');
 
     Route::get('/bus-tracking/data', [UserBusTrackingController::class, 'data'])
         ->name('user.bus.tracking.data');

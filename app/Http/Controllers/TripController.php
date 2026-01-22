@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bus;
+use App\Models\BusTrip;
 use App\Models\Driver;
 use App\Models\Route;
 use App\Models\Trip;
@@ -12,12 +13,12 @@ class TripController extends Controller
 {
     public function index()
     {
-        $trips = Trip::with(['bus', 'driver.user', 'route'])->orderBy('trip_date','desc')->get();
-        $buses = Bus::where('status','active')->get();
+        $trips = Trip::with(['bus', 'driver.user', 'route'])->orderBy('trip_date', 'desc')->get();
+        $buses = Bus::where('status', 'active')->get();
         $drivers = Driver::with('user')->get();
         $routes = Route::all();
 
-        return view('admin.trips.index', compact('trips','buses','drivers','routes'));
+        return view('admin.trips.index', compact('trips', 'buses', 'drivers', 'routes'));
     }
 
     public function store(Request $request)
@@ -58,5 +59,14 @@ class TripController extends Controller
     {
         $trip->delete();
         return redirect()->back()->with('success', 'Trip deleted successfully.');
+    }
+
+    public function dailyTrips()
+    {
+        $trips = BusTrip::with('bus', 'driver')
+            ->whereDate('created_at', now())
+            ->orderBy('start_time', 'desc')->get();
+
+        return view('admin.trips.daily_trips', compact('trips'));
     }
 }

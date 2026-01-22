@@ -2,39 +2,31 @@
 
 namespace Database\Seeders;
 
-use App\Models\BusLocation;
-use App\Models\Trip;
-use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\BusLocation;
+use App\Models\Bus;
 
 class BusLocationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        // Get ongoing trips only
-        $trips = Trip::where('status', 'ongoing')->get();
+        $busCoords = [
+            [-1.944, 30.061],
+            [-1.950, 30.058],
+            [-1.945, 30.065],
+            [-2.000, 29.980],
+            [-1.970, 30.100]
+        ];
 
-        foreach ($trips as $trip) {
+        $buses = Bus::all();
 
-            // Starting coordinates (example – Kigali area)
-            $latitude  = -1.9500000;
-            $longitude = 30.0588000;
-
-            // Generate multiple GPS points per trip
-            for ($i = 0; $i < 5; $i++) {
-
-                BusLocation::create([
-                    'bus_id'      => $trip->bus_id,
-                    'trip_id'     => $trip->id,
-                    'latitude'    => $latitude + ($i * 0.0005),
-                    'longitude'   => $longitude + ($i * 0.0005),
-                    'recorded_at' => Carbon::now()->subMinutes(5 - $i),
-                ]);
-            }
+        foreach($buses as $i => $bus){
+            BusLocation::create([
+                'bus_id' => $bus->id,
+                'latitude' => $busCoords[$i][0],
+                'longitude' => $busCoords[$i][1],
+                'recorded_at' => now()
+            ]);
         }
     }
 }
