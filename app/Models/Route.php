@@ -6,16 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
+   
     protected $fillable = [
         'name',
-        'start_point',
-        'end_point',
+        'bus_id',
         'pickup_points',
-        'bus_id'
+        'dropoff_points'
     ];
 
     protected $casts = [
         'pickup_points' => 'array',
+        'dropoff_points' => 'array',
     ];
 
     public function bus()
@@ -23,3 +24,5 @@ class Route extends Model
         return $this->belongsTo(Bus::class);
     }
 }
+
+

@@ -11,8 +11,8 @@
 
             <div>
                 <h4>{{ $student->first_name }} {{ $student->last_name }}</h4>
-                <p class="mb-1">🎓 Class: {{ $student->class }}</p>
-                <p class="mb-1">🚍 Bus: {{ $student->bus->plate_number ?? 'Not Assigned' }}</p>
+                <p class="mb-1">🎓 Parent: {{ $student->parent->name }}</p>
+                <p class="mb-1">🚍 Bus: {{ $student->buses->plate_number ?? 'Not Assigned' }}</p>
                 <p class="mb-0">🧑‍✈️ Driver: {{ $student->bus->driver->name ?? 'N/A' }}</p>
             </div>
         </div>

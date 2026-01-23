@@ -7,6 +7,15 @@
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     <!-- Add Student Button -->
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">
@@ -30,7 +39,7 @@
             @foreach($students as $student)
             <tr>
                 <td>{{ $student->id }}</td>
-                <td>{{ $student->names }}</td>
+                <td>{{ $student->first_name }} {{ $student->last_names }}</td>
                 <td>{{ $student->reg_number }}</td>
                 <td>{{ $student->parent->name }}</td>
                 <td>{{ $student->buses->pluck('plate_number')->join(', ') }}</td>
@@ -62,8 +71,12 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label class="form-label">Names</label>
-                                    <input type="text" class="form-control" name="names" value="{{ $student->names }}" required>
+                                    <label class="form-label">First Names</label>
+                                    <input type="text" class="form-control" name="first_name" value="{{ $student->first_name }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">last Names</label>
+                                    <input type="text" class="form-control" name="last_name" value="{{ $student->last_name }}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Parent</label>
@@ -124,12 +137,16 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Names</label>
-                        <input type="text" class="form-control" name="names" required>
+                        <label class="form-label">First Names</label>
+                        <input type="text" class="form-control" name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">last Names</label>
+                        <input type="text" class="form-control" name="last_name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Parent</label>
-                        <select class="form-select" name="student_parent_id" required>
+                        <select class="form-select" name="parent_id" required>
                             @foreach($parents as $parent)
                             <option value="{{ $parent->id }}">{{ $parent->name }}</option>
                             @endforeach

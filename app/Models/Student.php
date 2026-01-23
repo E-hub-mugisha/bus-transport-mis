@@ -9,7 +9,7 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['names', 'reg_number', 'parent_id'];
+    protected $fillable = ['first_name','last_name', 'reg_number', 'parent_id'];
 
     public function parent()
     {
@@ -17,7 +17,7 @@ class Student extends Model
     }
     public function buses()
     {
-        return $this->belongsToMany(Bus::class, 'bus_students');
+        return $this->belongsTo(Bus::class, 'bus_students');
     }
     public function trips()
     {

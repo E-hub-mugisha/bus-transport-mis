@@ -9,7 +9,15 @@
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createBusModal">
         Add New Bus
     </button>
-
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     <!-- Bus Table -->
     <table class="table table-bordered table-striped">
         <thead class="table-light">
@@ -95,6 +103,14 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
+                    <label class="form-label">driver</label>
+                    <select class="form-select" name="driver_id" required>
+                        @foreach($drivers as $driver)
+                        <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label>Plate Number</label>
                     <input type="text" name="plate_number" class="form-control" required>
                 </div>
@@ -122,25 +138,25 @@
 <!-- Toast Notifications -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     @if(session('success'))
-        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ session('success') }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
+    </div>
     @endif
 
     @if(session('error'))
-        <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('error') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ session('error') }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
+    </div>
     @endif
 </div>
 

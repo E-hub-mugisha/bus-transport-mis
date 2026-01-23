@@ -1,147 +1,134 @@
 @extends('layouts.app')
-@section('title','Route Management')
+
 @section('content')
+<div class="container">
 
-<div class="container mt-4">
-    <h3>Route Management</h3>
+    <div class="d-flex justify-content-between mb-3">
+        <h4>🛣️ Routes</h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoute">
+            + Add Route
+        </button>
+    </div>
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createRouteModal">
-        Add New Route
-    </button>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <th>#</th>
                 <th>Name</th>
-                <th>Start Point</th>
-                <th>End Point</th>
                 <th>Bus</th>
-                <th>Actions</th>
+                <th>Pickup Points</th>
+                <th>Dropoff Points</th>
+                <th width="140">Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($routes as $route)
+            @forelse($routes as $route)
             <tr>
-                <td>{{ $loop->iteration }}</td>
                 <td>{{ $route->name }}</td>
-                <td>{{ $route->start_point }}</td>
-                <td>{{ $route->end_point }}</td>
-                <td>{{ $route->bus->plate_number ?? 'Not Assigned' }}</td>
+                <td>{{ $route->bus->plate_number }}</td>
+                <td>{{ implode(', ', $route->pickup_points) }}</td>
+                <td>{{ implode(', ', $route->dropoff_points) }}</td>
                 <td>
-                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editRouteModal{{ $route->id }}">Edit</button>
+                    <button class="btn btn-sm btn-warning"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editRoute{{ $route->id }}">
+                        Edit
+                    </button>
 
-                    <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this route?')">Delete</button>
+                    <form action="{{ route('routes.destroy', $route) }}"
+                          method="POST" class="d-inline">
+                        @csrf @method('DELETE')
+                        <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this route?')">
+                            Delete
+                        </button>
                     </form>
-
-                    <!-- Edit Modal per route -->
-                    <div class="modal fade" id="editRouteModal{{ $route->id }}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <form action="{{ route('routes.update', $route->id) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Route</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label>Name</label>
-                                        <input type="text" name="name" class="form-control" value="{{ $route->name }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Start Point</label>
-                                        <input type="text" name="start_point" class="form-control" value="{{ $route->start_point }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>End Point</label>
-                                        <input type="text" name="end_point" class="form-control" value="{{ $route->end_point }}" required>
-                                    </div>
-                                    <textarea name="pickup_points" class="form-control mt-2">
-                                    {{ implode(',', $route->pickup_points ?? []) }}
-                                    </textarea>
-
-                                    <select name="bus_id" class="form-control mt-2">
-                                        <option value="">Assign Bus</option>
-                                        @foreach($buses as $bus)
-                                        <option value="{{ $bus->id }}" @selected($route->bus_id == $bus->id)>
-                                            {{ $bus->plate_number }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button class="btn btn-primary">Update</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                 </td>
             </tr>
-            @endforeach
+
+            {{-- Edit Modal --}}
+            <div class="modal fade" id="editRoute{{ $route->id }}">
+                <div class="modal-dialog">
+                    <form class="modal-content" method="POST"
+                        action="{{ route('routes.update', $route) }}">
+                        @csrf @method('PUT')
+
+                        <div class="modal-header">
+                            <h5>Edit Route</h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input class="form-control mb-2" name="name"
+                                value="{{ $route->name }}" required>
+
+                            <select class="form-control mb-2" name="bus_id">
+                                @foreach($buses as $bus)
+                                    <option value="{{ $bus->id }}"
+                                        @selected($bus->id == $route->bus_id)>
+                                        {{ $bus->plate_number }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <input class="form-control mb-2" name="pickup_points"
+                                value="{{ implode(',', $route->pickup_points) }}">
+
+                            <input class="form-control" name="dropoff_points"
+                                value="{{ implode(',', $route->dropoff_points) }}">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @empty
+            <tr>
+                <td colspan="5" class="text-center">No routes found</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
 
-<!-- Create Route Modal -->
-<div class="modal fade" id="createRouteModal" tabindex="-1">
+{{-- Create Modal --}}
+<div class="modal fade" id="createRoute">
     <div class="modal-dialog">
-        <form action="{{ route('routes.store') }}" method="POST" class="modal-content">
+        <form class="modal-content" method="POST" action="{{ route('routes.store') }}">
             @csrf
+
             <div class="modal-header">
-                <h5 class="modal-title">Add Route</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5>Add Route</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                <div class="mb-3">
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>Start Point</label>
-                    <input type="text" name="start_point" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>End Point</label>
-                    <input type="text" name="end_point" class="form-control" required>
-                </div>
-                <input type="text" name="end_point" class="form-control mt-2" placeholder="End Point">
+                <input class="form-control mb-2" name="name" placeholder="Route name" required>
 
-                <textarea name="pickup_points" class="form-control mt-2"
-                    placeholder="Pickup points (comma separated)"></textarea>
-
-                <select name="bus_id" class="form-control mt-2">
-                    <option value="">Assign Bus</option>
+                <select class="form-control mb-2" name="bus_id" required>
+                    <option value="">Select Bus</option>
                     @foreach($buses as $bus)
-                    <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
+                        <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
                     @endforeach
                 </select>
+
+                <input class="form-control mb-2" name="pickup_points"
+                       placeholder="Pickup points (comma separated)">
+
+                <input class="form-control" name="dropoff_points"
+                       placeholder="Dropoff points (comma separated)">
             </div>
+
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>
 </div>
-
-<!-- Toast Notifications -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    @if(session('success'))
-    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                {{ session('success') }}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-    @endif
-</div>
-
 @endsection

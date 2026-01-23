@@ -5,7 +5,7 @@
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
             href="{{ route('dashboard') }}">
             <span class="logo-icon">🚍</span>
-            <span class="logo-text">Live Pickup</span>
+            <span class="logo-text">{{ config('app.name')}}</span>
         </a>
 
         <!-- Mobile Toggle -->

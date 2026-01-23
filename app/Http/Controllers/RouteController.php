@@ -4,60 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\Bus;
 use App\Models\Route;
+use App\Models\Route as ModelsRoute;
 use Illuminate\Http\Request;
 
 class RouteController extends Controller
 {
     public function index()
     {
-        $routes = Route::with('bus')->get();
-        return view('admin.routes.index', compact('routes'));
-    }
-
-    public function create()
-    {
-        $buses = Bus::all();
-        return view('admin.routes.create', compact('buses'));
+        return view('routes.index', [
+            'routes' => ModelsRoute::with('bus')->latest()->get(),
+            'buses'  => Bus::all()
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
-            'start_point' => 'required',
-            'end_point' => 'required'
+            'bus_id' => 'required|exists:buses,id',
+            'pickup_points' => 'required',
+            'dropoff_points' => 'required',
         ]);
 
         Route::create([
             'name' => $request->name,
-            'start_point' => $request->start_point,
-            'end_point' => $request->end_point,
-            'pickup_points' => $request->pickup_points,
-            'bus_id' => $request->bus_id
+            'bus_id' => $request->bus_id,
+            'pickup_points' => array_map('trim', explode(',', $request->pickup_points)),
+            'dropoff_points' => array_map('trim', explode(',', $request->dropoff_points)),
         ]);
 
-        return redirect()->route('admin.routes.index')
-            ->with('success', 'Route created successfully');
-    }
-
-    public function edit(Route $route)
-    {
-        $buses = Bus::all();
-        return view('admin.routes.edit', compact('route', 'buses'));
+        return back()->with('success', 'Route created successfully');
     }
 
     public function update(Request $request, Route $route)
     {
-        $route->update($request->all());
+        $request->validate([
+            'name' => 'required',
+            'bus_id' => 'required|exists:buses,id',
+        ]);
 
-        return redirect()->route('admin.routes.index')
-            ->with('success', 'Route updated successfully');
+        $route->update([
+            'name' => $request->name,
+            'bus_id' => $request->bus_id,
+            'pickup_points' => array_map('trim', explode(',', $request->pickup_points)),
+            'dropoff_points' => array_map('trim', explode(',', $request->dropoff_points)),
+        ]);
+
+        return back()->with('success', 'Route updated successfully');
     }
 
     public function destroy(Route $route)
     {
         $route->delete();
-        return redirect()->route('admin.routes.index')
-            ->with('success', 'Route deleted successfully');
+        return back()->with('success', 'Route deleted');
     }
 }

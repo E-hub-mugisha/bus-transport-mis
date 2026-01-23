@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bus extends Model
 {
-    protected $fillable = ['bus_number', 'plate_number', 'capacity', 'status'];
+    protected $fillable = ['bus_number', 'plate_number', 'capacity', 'status','driver_id'];
 
     public function trips()
     {

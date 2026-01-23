@@ -26,7 +26,7 @@ class StudentController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'parent_id' => 'required|exists:parents,id',
+            'parent_id' => 'required|exists:users,id',
             'bus_id' => 'required|exists:buses,id'
         ]);
 

@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('buses', function (Blueprint $table) {
             $table->id();
-            $table->string('plate_number')->unique(); // RAB-xxx realistic
+            $table->string('bus_number')->unique();
+            $table->string('plate_number')->unique(); // RAB-xxx 
+            $table->integer('capacity')->nullable();
             $table->foreignId('driver_id')->constrained('users')->onDelete('cascade');
             $table->enum('status', ['active', 'inactive','maintenance'])->default('active');
             $table->timestamps();

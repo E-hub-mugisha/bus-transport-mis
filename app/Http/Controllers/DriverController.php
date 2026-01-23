@@ -15,7 +15,7 @@ class DriverController extends Controller
 {
     public function index()
     {
-        $drivers = Driver::with('user')->orderBy('id', 'desc')->get();
+        $drivers = User::where('role', 'driver')->orderBy('id', 'desc')->get();
         return view('admin.drivers.index', compact('drivers'));
     }
 
@@ -24,8 +24,6 @@ class DriverController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
-            'license_number' => 'required|string|unique:drivers,license_number',
-            'phone' => 'required|string',
         ]);
 
         // Generate random password
@@ -39,12 +37,6 @@ class DriverController extends Controller
             'role' => 'driver'
         ]);
 
-        // Create driver
-        Driver::create([
-            'user_id' => $user->id,
-            'license_number' => $request->license_number,
-            'phone' => $request->phone,
-        ]);
 
         // Send email with credentials
         Mail::to($user->email)->send(new DriverCredentialsMail($user->name, $user->email, $password));
@@ -53,36 +45,31 @@ class DriverController extends Controller
     }
 
 
-    public function edit(Driver $driver)
+    public function edit(User $driver)
     {
         return view('drivers.edit', compact('driver'));
     }
 
-    public function update(Request $request, Driver $driver)
+    public function update(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required|string',
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($driver->user_id)],
-            'license_number' => ['required', 'string', Rule::unique('drivers', 'license_number')->ignore($driver->id)],
-            'phone' => 'required|string',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->names)],
+            
         ]);
 
         // Update user
-        $driver->user->update([
+        $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
 
-        // Update driver
-        $driver->update([
-            'license_number' => $request->license_number,
-            'phone' => $request->phone,
-        ]);
+        
 
         return redirect()->back()->with('success', 'Driver updated successfully.');
     }
 
-    public function destroy(Driver $driver)
+    public function destroy(User $driver)
     {
         $driver->delete(); // user will also be deleted due to cascade
         return redirect()->back()->with('success', 'Driver deleted successfully.');

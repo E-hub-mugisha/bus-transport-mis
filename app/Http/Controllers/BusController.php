@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bus;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -12,14 +13,16 @@ class BusController extends Controller
     public function index()
     {
         $buses = Bus::orderBy('id', 'desc')->get();
-        return view('admin.buses.index', compact('buses'));
+        $drivers = User::where('role', 'driver')->get();
+        return view('admin.buses.index', compact('buses','drivers'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'plate_number' => 'required|string|unique:buses,plate_number',
-            'capacity' => 'required|string',
+            'capacity' => 'required',
+            'driver_id' => 'required',
             'status' => ['required', Rule::in(['active', 'inactive', 'maintenance'])],
         ]);
 
@@ -37,6 +40,7 @@ class BusController extends Controller
         Bus::create([
             'bus_number' => $busNumber,
             'plate_number' => $request->plate_number,
+            'driver_id' => $request->driver_id,
             'capacity' => $request->capacity,
             'status' => $request->status,
         ]);
@@ -54,7 +58,7 @@ class BusController extends Controller
         $request->validate([
             'bus_number' => ['required', 'string', Rule::unique('buses', 'bus_number')->ignore($bus->id)],
             'plate_number' => ['required', 'string', Rule::unique('buses', 'plate_number')->ignore($bus->id)],
-            'capacity' => 'required|string',
+            'capacity' => 'required',
             'status' => ['required', Rule::in(['active', 'inactive', 'maintenance'])],
         ]);
 
