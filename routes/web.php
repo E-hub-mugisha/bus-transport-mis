@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BusLocationController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\BusStudentController;
 use App\Http\Controllers\Driver\DriverDashboardController;
@@ -9,11 +10,13 @@ use App\Http\Controllers\Driver\DriverStudentController;
 use App\Http\Controllers\Driver\DriverTripController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\GpsController;
+use App\Http\Controllers\Parents\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentParentController;
 use App\Http\Controllers\StudentPickupPointController;
+use App\Http\Controllers\StudentTripController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripHistoryController;
 use App\Http\Controllers\UserBusTrackingController;
@@ -24,9 +27,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -114,6 +115,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/pickup-points/{pickup}', [StudentPickupPointController::class, 'destroy'])
         ->name('pickup-points.destroy');
 
+    Route::resource('student-trips', StudentTripController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+        
     // ADMIN – Live pickup monitoring
     Route::get('/gps/live-pickups', function () {
         return view('admin.gps.live_pickups');
@@ -185,4 +189,25 @@ Route::middleware(['auth'])->group(function () {
         ->name('trip.history.data');
 });
 
+Route::post('/bus-location', [App\Http\Controllers\BusLocationController::class, 'store']);
+Route::get('/bus/{bus}/location', [App\Http\Controllers\BusLocationController::class, 'latest']);
+
+Route::get('/simulate/bus/{bus}', function (\App\Models\Bus $bus) {
+    return view('simulate.bus', compact('bus'));
+});
+
+Route::get('/driver/trip/{busTrip}', [\App\Http\Controllers\TripTrackingController::class, 'track'])
+    ->name('driver.trip.track');
+
+Route::resource('bus-trips', App\Http\Controllers\TripTrackingController::class)
+    ->only(['update']);
+
+
+// Admin live map
+Route::get('/admin/buses/{bus}/track', [\App\Http\Controllers\TripTrackingController::class, 'show'])
+    ->name('admin.buses.track');
+
+// API for GPS
+Route::post('/api/bus-location', [\App\Http\Controllers\BusLocationController::class, 'store']);
+Route::get('/api/bus/{bus}/location', [\App\Http\Controllers\BusLocationController::class, 'latest']);
 require __DIR__ . '/auth.php';

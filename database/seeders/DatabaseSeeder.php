@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Route;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,9 +19,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             BusSeeder::class,
-            StudentsTableSeeder::class,
             RouteSeeder::class,
-            BusLocationSeeder::class
+            StudentsTableSeeder::class,
+            BusTripsTableSeeder::class,
+            StudentTripsTableSeeder::class,
+            BusLocationsTableSeeder::class,
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bus;
 use App\Models\BusLocation;
+use App\Models\BusTrip;
 use App\Models\Trip;
 use App\Models\TripLog;
 use Illuminate\Http\Request;
@@ -57,7 +58,7 @@ class GpsController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        $trip = Trip::findOrFail($request->trip_id);
+        $trip = BusTrip::findOrFail($request->trip_id);
 
         // Update trip status
         $trip->update(['status' => 'ongoing']);
@@ -71,14 +72,14 @@ class GpsController extends Controller
             'recorded_at' => now(),
         ]);
 
-        foreach ($trip->bus->students as $student) {
-            TripLog::create([
-                'trip_id' => $trip->id,
-                'student_id' => $student->id,
-                'bus_id' => $trip->bus_id,
-                'driver_id' => $trip->driver_id
-            ]);
-        }
+        // foreach ($trip->bus->students as $student) {
+        //     TripLog::create([
+        //         'trip_id' => $trip->id,
+        //         'student_id' => $student->id,
+        //         'bus_id' => $trip->bus_id,
+        //         'driver_id' => $trip->driver_id
+        //     ]);
+        // }
 
         return redirect()->back()->with('success', 'Trip started and location saved!');
     }
@@ -92,7 +93,7 @@ class GpsController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        $trip = Trip::where('id', $request->trip_id)
+        $trip = BusTrip::where('id', $request->trip_id)
             ->where('status', 'ongoing')
             ->firstOrFail();
 
@@ -108,7 +109,7 @@ class GpsController extends Controller
     public function liveView()
     {
         // Get all ongoing trips
-        $trips = Trip::where('status', 'ongoing')->with('bus')->get();
+        $trips = BusTrip::where('status', 'ongoing')->with('bus')->get();
 
         // Get distinct buses from ongoing trips
         $buses = $trips->pluck('bus')->unique('id');
@@ -118,7 +119,7 @@ class GpsController extends Controller
     // Fetch live locations
     public function live()
     {
-        return Trip::with(['bus', 'route', 'latestLocation'])
+        return BusTrip::with(['bus', 'route', 'latestLocation'])
             ->where('status', 'ongoing')
             ->get();
     }
@@ -141,7 +142,7 @@ class GpsController extends Controller
 
     public function dataTracking()
     {
-        $trips = Trip::with([
+        $trips = BusTrip::with([
             'bus',
             'route',
             'latestLocation'
@@ -154,7 +155,7 @@ class GpsController extends Controller
 
     public function liveBusWithPickupPoints()
     {
-        $trips = Trip::with([
+        $trips = BusTrip::with([
             'bus.students.pickupPoint',
             'route',
             'latestLocation'

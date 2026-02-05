@@ -7,58 +7,54 @@ use App\Models\BusTrip;
 use App\Models\Driver;
 use App\Models\Route;
 use App\Models\Trip;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TripController extends Controller
 {
     public function index()
     {
-        $trips = Trip::with(['bus', 'driver.user', 'route'])->orderBy('trip_date', 'desc')->get();
-        $buses = Bus::where('status', 'active')->get();
-        $drivers = Driver::with('user')->get();
-        $routes = Route::all();
+        $busTrips = BusTrip::with(['bus', 'driver'])->latest()->get();
+        $buses    = Bus::all();
+        $drivers  = User::where('role', 'driver')->get(); // adjust if needed
 
-        return view('admin.trips.index', compact('trips', 'buses', 'drivers', 'routes'));
+        return view('admin.trips.index', compact('busTrips', 'buses', 'drivers'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'bus_id' => 'required|exists:buses,id',
-            'driver_id' => 'required|exists:drivers,id',
-            'route_id' => 'required|exists:routes,id',
-            'trip_date' => 'required|date',
-            'departure_time' => 'required',
-            'arrival_time' => 'nullable',
-            'status' => 'required|in:scheduled,ongoing,completed,delayed',
+            'bus_id'    => 'required|exists:buses,id',
+            'driver_id' => 'required|exists:users,id',
+            'status'    => 'required|in:started,ended',
+            'start_time'=> 'nullable|date',
+            'end_time'  => 'nullable|date|after_or_equal:start_time',
         ]);
 
-        Trip::create($request->all());
+        BusTrip::create($request->all());
 
-        return redirect()->back()->with('success', 'Trip created successfully.');
+        return back()->with('success', 'Trip created successfully');
     }
 
-    public function update(Request $request, Trip $trip)
+    public function update(Request $request, BusTrip $busTrip)
     {
         $request->validate([
-            'bus_id' => 'required|exists:buses,id',
-            'driver_id' => 'required|exists:drivers,id',
-            'route_id' => 'required|exists:routes,id',
-            'trip_date' => 'required|date',
-            'departure_time' => 'required',
-            'arrival_time' => 'nullable',
-            'status' => 'required|in:scheduled,ongoing,completed,delayed',
+            'bus_id'    => 'required|exists:buses,id',
+            'driver_id' => 'required|exists:users,id',
+            'status'    => 'required|in:started,ended',
+            'start_time'=> 'nullable|date',
+            'end_time'  => 'nullable|date|after_or_equal:start_time',
         ]);
 
-        $trip->update($request->all());
+        $busTrip->update($request->all());
 
-        return redirect()->back()->with('success', 'Trip updated successfully.');
+        return back()->with('success', 'Trip updated successfully');
     }
 
-    public function destroy(Trip $trip)
+    public function destroy(BusTrip $busTrip)
     {
-        $trip->delete();
-        return redirect()->back()->with('success', 'Trip deleted successfully.');
+        $busTrip->delete();
+        return back()->with('success', 'Trip deleted successfully');
     }
 
     public function dailyTrips()

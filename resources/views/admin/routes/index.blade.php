@@ -11,7 +11,7 @@
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     <table class="table table-bordered">
@@ -29,8 +29,9 @@
             <tr>
                 <td>{{ $route->name }}</td>
                 <td>{{ $route->bus->plate_number }}</td>
-                <td>{{ implode(', ', $route->pickup_points) }}</td>
-                <td>{{ implode(', ', $route->dropoff_points) }}</td>
+                <td>{{ implode(', ', json_decode($route->pickup_points ?? '[]', true)) }}</td>
+                <td>{{ implode(', ', json_decode($route->dropoff_points ?? '[]', true)) }}</td>
+
                 <td>
                     <button class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
@@ -39,7 +40,7 @@
                     </button>
 
                     <form action="{{ route('routes.destroy', $route) }}"
-                          method="POST" class="d-inline">
+                        method="POST" class="d-inline">
                         @csrf @method('DELETE')
                         <button class="btn btn-sm btn-danger"
                             onclick="return confirm('Delete this route?')">
@@ -67,18 +68,18 @@
 
                             <select class="form-control mb-2" name="bus_id">
                                 @foreach($buses as $bus)
-                                    <option value="{{ $bus->id }}"
-                                        @selected($bus->id == $route->bus_id)>
-                                        {{ $bus->plate_number }}
-                                    </option>
+                                <option value="{{ $bus->id }}"
+                                    @selected($bus->id == $route->bus_id)>
+                                    {{ $bus->plate_number }}
+                                </option>
                                 @endforeach
                             </select>
 
                             <input class="form-control mb-2" name="pickup_points"
-                                value="{{ implode(',', $route->pickup_points) }}">
+       value="{{ implode(',', json_decode($route->pickup_points ?? '[]', true)) }}">
 
-                            <input class="form-control" name="dropoff_points"
-                                value="{{ implode(',', $route->dropoff_points) }}">
+<input class="form-control" name="dropoff_points"
+       value="{{ implode(',', json_decode($route->dropoff_points ?? '[]', true)) }}">
                         </div>
 
                         <div class="modal-footer">
@@ -114,15 +115,15 @@
                 <select class="form-control mb-2" name="bus_id" required>
                     <option value="">Select Bus</option>
                     @foreach($buses as $bus)
-                        <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
+                    <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
                     @endforeach
                 </select>
 
                 <input class="form-control mb-2" name="pickup_points"
-                       placeholder="Pickup points (comma separated)">
+                    placeholder="Pickup points (comma separated)">
 
                 <input class="form-control" name="dropoff_points"
-                       placeholder="Dropoff points (comma separated)">
+                    placeholder="Dropoff points (comma separated)">
             </div>
 
             <div class="modal-footer">

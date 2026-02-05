@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('reg_number')->unique();
             $table->foreignId('parent_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('bus_id')->constrained('buses')->onDelete('cascade');
             $table->timestamps();
         });
     }

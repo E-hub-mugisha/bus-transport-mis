@@ -42,7 +42,7 @@
                 <td>{{ $student->first_name }} {{ $student->last_names }}</td>
                 <td>{{ $student->reg_number }}</td>
                 <td>{{ $student->parent->name }}</td>
-                <td>{{ $student->buses->pluck('plate_number')->join(', ') }}</td>
+                <td>{{ $student->bus->plate_number ?? 'No Bus Assigned' }}</td>
                 <td>{{ $student->created_at->format('Y-m-d') }}</td>
                 <td>
                     <a class="btn btn-info btn-sm" href="{{ route('students.show', $student->id) }}">View Profile</a>

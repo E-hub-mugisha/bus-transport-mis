@@ -1,242 +1,208 @@
 @extends('layouts.app')
-@section('title','Trip Management')
+
 @section('content')
+<div class="container py-4">
 
-<div class="container mt-4">
-    <h3>Trip Management</h3>
+    <div class="d-flex justify-content-between mb-3">
+        <h4 class="fw-bold">🚌 Bus Trips</h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTripModal">
+            + New Trip
+        </button>
+    </div>
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createTripModal">
-        Add New Trip
-    </button>
+    @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>#</th>
-                <th>Bus</th>
-                <th>Driver</th>
-                <th>Route</th>
-                <th>Trip Date</th>
-                <th>Departure</th>
-                <th>Arrival</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($trips as $trip)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $trip->bus->bus_number }}</td>
-                <td>{{ $trip->driver->user->name }}</td>
-                <td>{{ $trip->route->name }}</td>
-                <td>{{ $trip->trip_date }}</td>
-                <td>{{ $trip->departure_time }}</td>
-                <td>{{ $trip->arrival_time ?? '-' }}</td>
-                <td>{{ ucfirst($trip->status) }}</td>
-                <td>
-                    <!-- Start Trip Button (only for scheduled trips) -->
-                    @if($trip->status == 'scheduled')
-                    <button class="btn btn-sm btn-success" onclick="startTrip({{ $trip->id }}, {{ $trip->bus_id }})">
-                        🚀 Start Trip
-                    </button>
-                    @endif
-
-                    <!-- Edit Modal Trigger -->
-                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editTripModal{{ $trip->id }}">Edit</button>
-
-                    <!-- Delete Form -->
-                    <form action="{{ route('trips.destroy', $trip->id) }}" method="POST" style="display:inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this trip?')">Delete</button>
-                    </form>
-
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editTripModal{{ $trip->id }}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <form action="{{ route('trips.update', $trip->id) }}" method="POST" class="modal-content">
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Bus</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($busTrips as $trip)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $trip->bus->plate_number }}</td>
+                        <td>{{ $trip->driver->name }}</td>
+                        <td>
+                            <span class="badge bg-{{ $trip->status === 'started' ? 'success' : 'secondary' }}">
+                                {{ ucfirst($trip->status) }}
+                            </span>
+                        </td>
+                        <td>{{ $trip->start_time ?? '—' }}</td>
+                        <td>{{ $trip->end_time ?? '—' }}</td>
+                        <td class="d-flex gap-2">
+                            <form method="POST" action="{{ route('bus-trips.update', $trip) }}">
                                 @csrf
                                 @method('PUT')
+                                <input type="hidden" name="status" value="started">
+                                <input type="hidden" name="start_time" value="{{ now() }}">
+                                <button class="btn btn-sm btn-success">Start Trip</button>
+                            </form>
+                            <form method="POST" action="{{ route('bus-trips.update', $trip) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="status" value="ended">
+                                <input type="hidden" name="end_time" value="{{ now() }}">
+                                <button class="btn btn-sm btn-danger">End Trip</button>
+                            </form>
+
+                            <!-- Edit -->
+                            <button class="btn btn-sm btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editTrip{{ $trip->id }}">
+                                Edit
+                            </button>
+
+                            <!-- Delete -->
+                            <form method="POST" action="{{ route('trips.destroy', $trip) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Delete this trip?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editTrip{{ $trip->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <form method="POST" action="{{ route('trips.update', $trip) }}" class="modal-content">
+                                @csrf
+                                @method('PUT')
+
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Trip</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label>Bus</label>
-                                        <select name="bus_id" class="form-control" required>
+
+                                <div class="modal-body row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Bus</label>
+                                        <select name="bus_id" class="form-select" required>
                                             @foreach($buses as $bus)
-                                            <option value="{{ $bus->id }}" {{ $bus->id == $trip->bus_id ? 'selected':'' }}>
-                                                {{ $bus->bus_number }}
+                                            <option value="{{ $bus->id }}"
+                                                @selected($bus->id == $trip->bus_id)>
+                                                {{ $bus->plate_number }}
                                             </option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label>Driver</label>
-                                        <select name="driver_id" class="form-control" required>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Driver</label>
+                                        <select name="driver_id" class="form-select" required>
                                             @foreach($drivers as $driver)
-                                            <option value="{{ $driver->id }}" {{ $driver->id == $trip->driver_id ? 'selected':'' }}>
-                                                {{ $driver->user->name }}
+                                            <option value="{{ $driver->id }}"
+                                                @selected($driver->id == $trip->driver_id)>
+                                                {{ $driver->name }}
                                             </option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label>Route</label>
-                                        <select name="route_id" class="form-control" required>
-                                            @foreach($routes as $route)
-                                            <option value="{{ $route->id }}" {{ $route->id == $trip->route_id ? 'selected':'' }}>
-                                                {{ $route->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Trip Date</label>
-                                        <input type="date" name="trip_date" class="form-control" value="{{ $trip->trip_date }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Departure Time</label>
-                                        <input type="time" name="departure_time" class="form-control" value="{{ $trip->departure_time }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Arrival Time</label>
-                                        <input type="time" name="arrival_time" class="form-control" value="{{ $trip->arrival_time }}">
-                                    </div>
-                                    <div class="mb-3">
+
+                                    <div class="col-md-6">
                                         <label>Status</label>
-                                        <select name="status" class="form-control" required>
-                                            @foreach(['scheduled','ongoing','completed','delayed'] as $status)
-                                            <option value="{{ $status }}" {{ $status == $trip->status ? 'selected':'' }}>
-                                                {{ ucfirst($status) }}
-                                            </option>
-                                            @endforeach
+                                        <select name="status" class="form-select">
+                                            <option value="started" @selected($trip->status=='started')>Started</option>
+                                            <option value="ended" @selected($trip->status=='ended')>Ended</option>
                                         </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label>Start Time</label>
+                                        <input type="datetime-local" name="start_time" class="form-control"
+                                            value="{{ $trip->start_time ? \Carbon\Carbon::parse($trip->start_time)->format('Y-m-d\TH:i') : '' }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label>End Time</label>
+                                        <input type="datetime-local" name="end_time" class="form-control"
+                                            value="{{ $trip->end_time ? \Carbon\Carbon::parse($trip->end_time)->format('Y-m-d\TH:i') : '' }}">
                                     </div>
                                 </div>
+
                                 <div class="modal-footer">
-                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                     <button class="btn btn-primary">Update</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<!-- Create Trip Modal -->
+<!-- Create Modal -->
 <div class="modal fade" id="createTripModal" tabindex="-1">
-    <div class="modal-dialog">
-        <form action="{{ route('trips.store') }}" method="POST" class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="{{ route('trips.store') }}" class="modal-content">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Add Trip</h5>
+                <h5 class="modal-title">New Trip</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="mb-3">
+
+            <div class="modal-body row g-3">
+                <div class="col-md-6">
                     <label>Bus</label>
-                    <select name="bus_id" class="form-control" required>
+                    <select name="bus_id" class="form-select" required>
+                        <option value="">Select bus</option>
                         @foreach($buses as $bus)
-                        <option value="{{ $bus->id }}">{{ $bus->bus_number }}</option>
+                        <option value="{{ $bus->id }}">{{ $bus->plate_number }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="mb-3">
+
+                <div class="col-md-6">
                     <label>Driver</label>
-                    <select name="driver_id" class="form-control" required>
+                    <select name="driver_id" class="form-select" required>
+                        <option value="">Select driver</option>
                         @foreach($drivers as $driver)
-                        <option value="{{ $driver->id }}">{{ $driver->user->name }}</option>
+                        <option value="{{ $driver->id }}">{{ $driver->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label>Route</label>
-                    <select name="route_id" class="form-control" required>
-                        @foreach($routes as $route)
-                        <option value="{{ $route->id }}">{{ $route->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label>Trip Date</label>
-                    <input type="date" name="trip_date" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>Departure Time</label>
-                    <input type="time" name="departure_time" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>Arrival Time</label>
-                    <input type="time" name="arrival_time" class="form-control">
-                </div>
-                <div class="mb-3">
+
+                <div class="col-md-6">
                     <label>Status</label>
-                    <select name="status" class="form-control" required>
-                        @foreach(['scheduled','ongoing','completed','delayed'] as $status)
-                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-                        @endforeach
+                    <select name="status" class="form-select">
+                        <option value="started">Started</option>
+                        <option value="ended">Ended</option>
                     </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Start Time</label>
+                    <input type="datetime-local" name="start_time" class="form-control">
+                </div>
+
+                <div class="col-md-6">
+                    <label>End Time</label>
+                    <input type="datetime-local" name="end_time" class="form-control">
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary">Save</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary">Save Trip</button>
             </div>
         </form>
     </div>
 </div>
-
-<!-- Toast Notifications -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    @if(session('success'))
-    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                {{ session('success') }}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-    @endif
-</div>
-
-<script>
-    function startTrip(tripId, busId) {
-        if (!navigator.geolocation) {
-            alert('Geolocation is not supported by your browser.');
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = "{{ route('gps.start.trip') }}";
-                form.innerHTML = `
-                @csrf
-                <input type="hidden" name="trip_id" value="${tripId}">
-                <input type="hidden" name="bus_id" value="${busId}">
-                <input type="hidden" name="latitude" value="${position.coords.latitude.toFixed(7)}">
-                <input type="hidden" name="longitude" value="${position.coords.longitude.toFixed(7)}">
-            `;
-                document.body.appendChild(form);
-                form.submit();
-            },
-            function(error) {
-                alert('Unable to get your location. Please enable GPS.');
-            }, {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    }
-</script>
 @endsection

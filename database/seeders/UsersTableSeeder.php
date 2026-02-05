@@ -5,47 +5,58 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
 {
     public function run()
     {
-        // Admin
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'kabosierik@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin'
+        DB::table('users')->insert([
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Driver One',
+                'email' => 'driver1@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 'driver',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Driver Two',
+                'email' => 'driver2@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 'driver',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Parent One',
+                'email' => 'parent1@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 'parent',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Parent Two',
+                'email' => 'parent2@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 'parent',
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
-
-        // Drivers
-        $drivers = [
-            ['Jean Pierre', 'driver1@eduride.rw'],
-            ['Emmanuel', 'driver2@eduride.rw'],
-            ['Patrick', 'driver3@eduride.rw']
-        ];
-        foreach($drivers as $d){
-            User::create([
-                'name' => $d[0],
-                'email' => $d[1],
-                'password' => Hash::make('password'),
-                'role' => 'driver'
-            ]);
-        }
-
-        // Parents
-        $parents = [
-            ['Alice Uwase','parent1@eduride.rw'],
-            ['Jean Bosco','parent2@eduride.rw'],
-            ['Marie Chantal','parent3@eduride.rw']
-        ];
-        foreach($parents as $p){
-            User::create([
-                'name' => $p[0],
-                'email' => $p[1],
-                'password' => Hash::make('password'),
-                'role' => 'parent'
-            ]);
-        }
     }
 }

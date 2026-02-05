@@ -16,36 +16,36 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::with('parent', 'buses')->get();
+        $students = Student::with('parent', 'bus')->get();
         $parents = User::where('role', 'parent')->get();
         $buses = Bus::all();
-        return view('admin.students.index', compact('students', 'parents','buses'));
+        return view('admin.students.index', compact('students', 'parents', 'buses'));
     }
     public function store(Request $request)
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'parent_id' => 'required|exists:users,id',
-            'bus_id' => 'required|exists:buses,id'
+            'last_name'  => 'required|string|max:255',
+            'parent_id'  => 'required|exists:users,id',
+            'bus_id'     => 'required|exists:buses,id',
         ]);
 
         $lastId = Student::max('id') ?? 0;
-
         $regNumber = 'STU-' . str_pad($lastId + 1, 4, '0', STR_PAD_LEFT);
 
-        $student = Student::create([
+        Student::create([
             'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'parent_id' => $request->parent_id,
+            'last_name'  => $request->last_name,
+            'parent_id'  => $request->parent_id,
+            'bus_id'     => $request->bus_id,   // ✅ assign bus here
             'reg_number' => $regNumber,
         ]);
 
-        // Assign student to bus
-        $student->buses()->attach($request->bus_id);
-
-        return redirect()->route('students.index')->with('success', 'Student added successfully!');
+        return redirect()
+            ->route('students.index')
+            ->with('success', 'Student added successfully!');
     }
+
 
     public function update(Request $request, Student $student)
     {
@@ -75,7 +75,7 @@ class StudentController extends Controller
         $student->load([
             'trips.trip',
             'trips.driver',
-            'buses'
+            'bus'
         ]);
 
         return view('admin.students.show', compact('student'));

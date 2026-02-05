@@ -44,8 +44,8 @@
 
                 <li class="nav-item"><a class="nav-link" href="{{ route('routes.index') }}">Routes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('trips.index') }}">Trips</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('bus-students.index') }}">Assign Students</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('pickup-points.index') }}">Pickup Points</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="{{ route('bus-students.index') }}">Assign Students</a></li> -->
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('student-trips.index') ? 'active' : '' }}" href="{{ route('student-trips.index') }}">Student Trips</a></li>
 
 
                 <!-- Live Tracking -->

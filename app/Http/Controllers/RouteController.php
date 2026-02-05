@@ -11,7 +11,7 @@ class RouteController extends Controller
 {
     public function index()
     {
-        return view('routes.index', [
+        return view('admin.routes.index', [
             'routes' => ModelsRoute::with('bus')->latest()->get(),
             'buses'  => Bus::all()
         ]);

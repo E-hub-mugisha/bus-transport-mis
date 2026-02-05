@@ -6,18 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentTrip extends Model
 {
-    public function parent()
+    protected $fillable = [
+        'student_id',
+        'bus_id',
+        'status',
+        'recorded_at',
+    ];
+
+    public function student()
     {
-        return $this->belongsTo(User::class, 'parent_id');
+        return $this->belongsTo(Student::class);
     }
 
-    public function buses()
+    public function bus()
     {
-        return $this->belongsToMany(Bus::class, 'student_bus');
-    }
-
-    public function trips()
-    {
-        return $this->hasMany(StudentTrip::class);
+        return $this->belongsTo(Bus::class);
     }
 }

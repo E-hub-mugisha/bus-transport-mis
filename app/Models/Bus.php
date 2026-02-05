@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bus extends Model
 {
-    protected $fillable = ['bus_number', 'plate_number', 'capacity', 'status','driver_id'];
+    protected $fillable = ['bus_number', 'plate_number', 'capacity', 'status', 'driver_id'];
 
     public function trips()
     {
-        return $this->hasMany(Trip::class);
+        return $this->hasMany(BusTrip::class);
     }
 
     public function locations()
@@ -20,6 +20,12 @@ class Bus extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'bus_students');
+        return $this->belongsToMany(Student::class, 'student_trips', 'bus_id', 'student_id')
+                    ->withTimestamps();
+    }
+
+    public function latestLocation()
+    {
+        return $this->hasOne(BusLocation::class)->latestOfMany();
     }
 }

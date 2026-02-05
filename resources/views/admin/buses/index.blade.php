@@ -39,6 +39,10 @@
                 <td>{{ $bus->capacity }}</td>
                 <td>{{ ucfirst($bus->status) }}</td>
                 <td>
+                    <a href="{{ route('admin.buses.track', $bus) }}" class="btn btn-sm btn-outline-primary">
+                        Track
+                    </a>
+
                     <!-- Edit Button triggers modal -->
                     <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editBusModal{{ $bus->id }}">Edit</button>
 

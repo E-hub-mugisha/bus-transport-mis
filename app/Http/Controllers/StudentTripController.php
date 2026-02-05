@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Bus;
 use App\Models\Student;
-use App\Models\StudentPickupPoint;
 use App\Models\StudentTrip;
-use Illuminate\Http\Request;
 
-class StudentPickupPointController extends Controller
+class StudentTripController extends Controller
 {
     public function index()
     {
@@ -16,7 +15,7 @@ class StudentPickupPointController extends Controller
         $students = Student::all();
         $buses = Bus::all();
 
-        return view('student_trips.index', compact('studentTrips', 'students', 'buses'));
+        return view('admin.student_trips.index', compact('studentTrips', 'students', 'buses'));
     }
 
     public function store(Request $request)
