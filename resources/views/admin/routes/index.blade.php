@@ -29,8 +29,8 @@
             <tr>
                 <td>{{ $route->name }}</td>
                 <td>{{ $route->bus->plate_number }}</td>
-                <td>{{ implode(', ', json_decode($route->pickup_points ?? '[]', true)) }}</td>
-                <td>{{ implode(', ', json_decode($route->dropoff_points ?? '[]', true)) }}</td>
+                <td>{{ implode(', ', (array) $route->pickup_points) }}</td>
+                <td>{{ implode(', ', (array) $route->dropoff_points) }}</td>
 
                 <td>
                     <button class="btn btn-sm btn-warning"
@@ -76,10 +76,10 @@
                             </select>
 
                             <input class="form-control mb-2" name="pickup_points"
-       value="{{ implode(',', json_decode($route->pickup_points ?? '[]', true)) }}">
+                                value="{{ implode(',', (array) $route->pickup_points) }}">
 
-<input class="form-control" name="dropoff_points"
-       value="{{ implode(',', json_decode($route->dropoff_points ?? '[]', true)) }}">
+                            <input class="form-control" name="dropoff_points"
+                                value="{{ implode(',', (array) $route->dropoff_points) }}">
                         </div>
 
                         <div class="modal-footer">

@@ -61,8 +61,6 @@
                     <label>Role</label>
                     <select name="role" class="form-control" required>
                         <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                        <option value="super_admin">Super Admin</option>
                         <option value="driver">Driver</option>
                         <option value="manager">Manager</option>
                     </select>
